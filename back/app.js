@@ -22,20 +22,25 @@ app.use('/api/products', productRoutes);
 
 module.exports = app;
 
-document.body.onload = addElement;
+const newElt = document.createElement("div");
+let elt = document.getElementById("items");
 
-function addElement () {
-  // crée un nouvel élément div
-  var newA = document.createElement('a');
-  // et lui donne un peu de contenu
-  var newContent = document.createTextNode('Hi there and greetings!');
-  // ajoute le nœud texte au nouveau div créé
-  newA.appendChild(newContent);
+elt.appendChild(newElt);
 
-  // ajoute le nouvel élément créé et son contenu dans le DOM
-  var currentDiv = document.getElementById('items');
-  document.body.appendChild(newA, currentDiv);
-}
+// document.body.onload = addElement;
+
+// function addElement () {
+//   // crée un nouvel élément div
+//   var newA = document.createElement('a');
+//   // et lui donne un peu de contenu
+//   var newContent = document.createTextNode('Hi there and greetings!');
+//   // ajoute le nœud texte au nouveau div créé
+//   newA.appendChild(newContent);
+
+//   // ajoute le nouvel élément créé et son contenu dans le DOM
+//   var currentDiv = document.getElementById('items');
+//   document.body.appendChild(newA, currentDiv);
+// }
 
 // let url = `http://localhost:3000/api/products`;
 
