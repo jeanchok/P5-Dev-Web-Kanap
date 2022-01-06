@@ -21,34 +21,3 @@ app.use(express.json());
 app.use('/api/products', productRoutes);
 
 module.exports = app;
-
-const newElt = document.createElement("div");
-let elt = document.getElementById("items");
-
-elt.appendChild(newElt);
-
-// document.body.onload = addElement;
-
-// function addElement () {
-//   // crée un nouvel élément div
-//   var newA = document.createElement('a');
-//   // et lui donne un peu de contenu
-//   var newContent = document.createTextNode('Hi there and greetings!');
-//   // ajoute le nœud texte au nouveau div créé
-//   newA.appendChild(newContent);
-
-//   // ajoute le nouvel élément créé et son contenu dans le DOM
-//   var currentDiv = document.getElementById('items');
-//   document.body.appendChild(newA, currentDiv);
-// }
-
-// let url = `http://localhost:3000/api/products`;
-
-// fetch(url).then((response)=>
-//   response.json().then((data)=> {
-//     console.log(data);
-//     document.querySelector('.productName').innerHTML = data.name;
-//     document.querySelector('.productDescription').innerHTML = data.description;
-//   })
-//   .catch((err) => console.log('Erreur : '+ err));
-// );

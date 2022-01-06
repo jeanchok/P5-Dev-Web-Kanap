@@ -1,33 +1,27 @@
-main();
+getArticles();
 
-function main() {
-  getArticles();
-}
-
-function getArticles(){
-
-let url = `http://localhost:3000/api/products`;
-fetch(url)
-    .then(function(response){
-        return response.json();
+function getArticles() {
+  fetch("http://localhost:3000/api/products")
+    .then(function (res) {
+      return res.json();
     })
-        
-    .catch((err) => console.log('Erreur : '+ err))
+    .catch((error) => console.log(`Erreur : ` + error))
 
-    .then(function(returnAPI){
-    const articles = returnAPI;
-    console.log(articles);
-    for (let article in articles){
+
+    .then(function (returnAPI) {
+      const articles = returnAPI;
+      console.log(articles);
+      for (let article in articles){
         let itemLink = document.createElement("a");
         let items = document.getElementById("items");
-        itemLink.href = `product.html?id=${resultatAPI[article]._id}`;
+        itemLink.href = `product.html?id=${returnAPI[article]._id}`;
         items.appendChild(itemLink);
         
         let newEltArticle = document.createElement("article");
         itemLink.appendChild(newEltArticle);
         
         let itemImg = document.createElement("img");
-        itemImg.src = resultatAPI[article].imageUrl;
+        itemImg.src = returnAPI[article].imageUrl;
         newEltArticle.appendChild(itemImg);
         
         let itemTitle = document.createElement("h3");
@@ -40,5 +34,5 @@ fetch(url)
         newEltArticle.appendChild(itemDescription);
         itemDescription.classList.add("productDescription");
     }
-    })
-};
+    });
+}
