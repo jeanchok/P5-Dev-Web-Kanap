@@ -1,5 +1,5 @@
 getArticles();
-
+// appel à l'API
 function getArticles() {
   fetch("http://localhost:3000/api/products")
     .then(function (res) {
@@ -7,7 +7,7 @@ function getArticles() {
     })
     .catch((error) => console.log(`Erreur : ` + error))
 
-
+    // répartition des informations des produits
     .then(function (returnAPI) {
       const articles = returnAPI;
       console.log(articles);
@@ -23,6 +23,7 @@ function getArticles() {
         let itemImg = document.createElement("img");
         itemImg.src = returnAPI[article].imageUrl;
         newEltArticle.appendChild(itemImg);
+        itemImg.setAttribute("alt",returnAPI[article].altTxt);
         
         let itemTitle = document.createElement("h3");
         itemTitle.innerHTML = returnAPI[article].name;
