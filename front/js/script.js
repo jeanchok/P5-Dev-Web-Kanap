@@ -2,9 +2,8 @@ getArticles();
 // appel à l'API
 function getArticles() {
   fetch("http://localhost:3000/api/products")
-    .then(function (res) {
-      return res.json();
-    })
+    .then(res => res.json())
+
     .catch((error) => console.log(`Erreur : ` + error))
 
     // répartition des informations des produits
