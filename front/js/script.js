@@ -4,12 +4,13 @@ function getArticles() {
   fetch("http://localhost:3000/api/products")
     .then(res => res.json())
 
-    .catch((error) => console.log(`Erreur : ` + error))
+    .catch(error => console.log(`Erreur : ` + error))
 
     // répartition des informations des produits
     .then(function (returnAPI) {
       const articles = returnAPI;
       console.log(articles);
+    
       for (let article in articles){
         let itemLink = document.createElement("a");
         let items = document.getElementById("items");
