@@ -1,7 +1,5 @@
-var cart = localStorage.getItem('cart');
-console.log('cart: ', JSON.parse(cart));
-
-let addedToCart = JSON.parse(cart);
+let cart = [{qty: '0', id: '107fb5b75607497b96722bda5b504926', color: 'Blue'}];
+localStorage.setItem("cart",JSON.stringify(cart));
 
 addedToCart.forEach(function(){
     let itemArt = document.createElement("article");
