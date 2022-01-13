@@ -67,7 +67,7 @@ const log = console.log;
 // Evenement appuyer sur "Ajouter au panier"
 addToCart.onclick = function() {   
   const infoArticle = {};
-  let isNotinCart = true;
+  let isInCart = false;
   let quantityArticle = document.getElementById("quantity").value;
   let colorSelect = document.getElementById( "colors" ).value;
   infoArticle.qty = Number(quantityArticle);
@@ -79,11 +79,11 @@ addToCart.onclick = function() {
     cart.forEach(function(item){
       if(item.id === infoArticle.id && item.color === infoArticle.color){
         item.qty = Number(item.qty) + Number(infoArticle.qty);
-        isNotinCart = false;
+        isInCart = true;
       }
     });
 
-    if(isNotinCart){
+    if(!isInCart){
       cart.push(infoArticle);
     }
 
