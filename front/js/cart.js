@@ -107,6 +107,7 @@ calculTotal();
 function calculTotal(){
     let pricePerItems = 0;
     let SumQty = 0;
+    let sumPrice = [];
     cart.forEach(function(item){
         let id = item.id;
         let qty = Number(item.qty);
@@ -115,7 +116,6 @@ function calculTotal(){
         .then(res => res.json())
         .catch((error) => console.log(`Erreur : ` + error))
         .then(function (returnAPI){
-            let sumPrice = [];
             pricePerItems = qty * returnAPI.price;
             sumPrice.push(pricePerItems);
             SumQty += qty;
@@ -143,10 +143,12 @@ document.querySelector('body').addEventListener('change', function(event) {
           localStorage.setItem("shoppingCart",JSON.stringify(cart));
           loadCart();
           log(cart);
-          calculTotal();
+          
         }
       });
+      calculTotal();
     }
+    
 });
 
 // Supprimer un article du panier
@@ -168,27 +170,88 @@ document.querySelector('body').addEventListener('click', function(event) {
               
             };
         });
+      calculTotal();
     };
 });
 
 //Vérification des entrées utilisateur
 const input_fields = {
+    itemQuantity: /[0-9]+/,
     firstName: /^[A-Z]+$/i,
     lastName: /^[A-Z]+$/i,
-    address: /^[a-z\d]{5,12}$/i,
+    address: /^[a-zA-Z0-9\s,'-]*$/i,
     city: /^[A-Z]+$/i,
     email: /^([a-z\d\.-]+)@([a-z\d-]+)\.([a-z]{2,8})(\.[a-z]{2,8})?$/,
-    password: /^[#\w@_-]{8,20}$/,
-    telephone: /(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}/,
 }
-const validate = (field, regex) => {
-    regex.test(field.value) ? field.className = 'valid' : field.className = 'invalid';
+
+let isValid = [];
+function validate(field, regex){
+  regex.test(field.value) ? isValid = isValid.filter(e => e !== field.id) : (field.nextElementSibling.innerHTML = "Entrée invalide !", isValid.push(field.id));
 }
-let keys = document.querySelectorAll('input');
-keys.forEach(item => item.addEventListener(
-  'keyup', e => {
-    validate(e.target, input_fields[e.target.attributes.name.value])
+let entree = document.querySelectorAll('input');
+entree.forEach(item => item.addEventListener('change', function(event){
+    validate(event.target, input_fields[event.target.attributes.name.value]);
   }
 ));
 
-let errorMessage = document.getElementById("firstNameErrorMsg");
+// Rassembler les entrée dans un objet contact
+function getContact(){
+  const contact = {};
+  contact.firstName = document.getElementById("firstName").value;
+  contact.lastName = document.getElementById("lastName").value;
+  contact.address = document.getElementById("address").value;
+  contact.city = document.getElementById("city").value;
+  contact.email = document.getElementById("email").value;
+  return contact;
+}
+
+// Vérification si les entrées sont remplis
+function areFieldsEmpty(contact){
+  for (let key in contact){
+    if (contact[key] !== "")
+    return true;
+  }
+  return false;
+}
+
+// Création d'un tableau de string avec seulement les ids du panier
+function getIdFromCart(){
+  let idFromCart = [];
+  cart.forEach(function(item){
+    let itemId = item.id;
+    let itemIdString = itemId.toString();
+    idFromCart.push(itemIdString);
+  });
+  return idFromCart;
+}
+
+//POST à l'API
+function postToAPI(order){
+  fetch("http://localhost:3000/api/products/order", {
+    method : "POST",
+    body : JSON.stringify(order),
+    headers : {
+      'Accept' : 'application/json',
+      'Content-Type' : 'application/json'
+    },
+  });
+}
+
+// Passer la commande
+document.getElementById('order').addEventListener('click',function(event){
+  event.preventDefault();
+  let contact = getContact();
+  let theFieldsAreNotEmpty = areFieldsEmpty(contact);
+    if(isValid.length == 0 && theFieldsAreNotEmpty == true){
+      let products = getIdFromCart();
+      let order = {contact, products};
+      postToAPI(order);
+    }
+    if(theFieldsAreNotEmpty == false){
+      log("Entrée vide");
+    }
+    if(isValid.length !== 0){
+      log("Entrée incorrecte");
+    } 
+  }
+);

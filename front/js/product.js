@@ -93,10 +93,6 @@ addToCart.onclick = function() {
     log(JSON.parse(shoppingCart));
 
   } else {
-    // let warning = document.createElement("h3");
-    // let containerAddToCart = document.getElementsByClassName("item__content__addButton")[0];
-    // containerAddToCart.appendChild(warning);
-    // warning.innerHTML = 'Veuillez sélectionner une couleur et un quantité. <br>';
     log("Veuillez sélectionner une couleur et un quantité.");
   } 
 }
