@@ -225,7 +225,7 @@ function getIdFromCart(){
   return idFromCart;
 }
 
-//POST à l'API
+//POST à l'API et récupération de l'IdOrder
 function postToAPI(order){
   fetch("http://localhost:3000/api/products/order", {
     method : "POST",
@@ -234,11 +234,29 @@ function postToAPI(order){
       'Accept' : 'application/json',
       'Content-Type' : 'application/json'
     },
-  });
+  })
+  .then(function(res){
+    if(res.ok){
+      return res.json();
+    }
+  })
+  .then(function(data){
+    localStorage.clear();
+    localStorage.setItem('orderId',data.orderId);
+    log(localStorage);
+    let orderId = JSON.parse(localStorage.getItem('orderId'));
+    log(orderId);
+  })
+}
+
+// Redirection sur la page de confirmation
+function goToOrderConfirmation(orderButton){
+  orderButton.href = `confirmation.html?id=${returnAPI[article]._id}`;
 }
 
 // Passer la commande
-document.getElementById('order').addEventListener('click',function(event){
+let orderButton = document.getElementById('order');
+orderButton.addEventListener('click',function(event){
   event.preventDefault();
   let contact = getContact();
   let theFieldsAreNotEmpty = areFieldsEmpty(contact);
@@ -246,6 +264,7 @@ document.getElementById('order').addEventListener('click',function(event){
       let products = getIdFromCart();
       let order = {contact, products};
       postToAPI(order);
+      
     }
     if(theFieldsAreNotEmpty == false){
       log("Entrée vide");
