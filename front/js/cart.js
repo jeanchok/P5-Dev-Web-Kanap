@@ -35,6 +35,7 @@ function getInfo(item) {
     itemArticle.setAttribute ("data-color", item.color);
     items.appendChild(itemArticle);
     itemArticle.classList.add("cart__item");
+    log("2");
 
     let imgContainer = document.createElement("div");
     itemArticle.appendChild(imgContainer);
@@ -116,6 +117,7 @@ function calculTotal(){
         .then(res => res.json())
         .catch((error) => console.log(`Erreur : ` + error))
         .then(function (returnAPI){
+            log("3");
             pricePerItems = qty * returnAPI.price;
             sumPrice.push(pricePerItems);
             SumQty += qty;
@@ -240,19 +242,18 @@ function postToAPI(order){
       return res.json();
     }
   })
+  .catch((error) => console.log(`Erreur : ` + error))
   .then(function(data){
-    localStorage.clear();
-    localStorage.setItem('orderId',data.orderId);
-    log(localStorage);
-    let orderId = JSON.parse(localStorage.getItem('orderId'));
-    log(orderId);
+    //localStorage.clear();
+    localStorage.setItem('orderId',data.orderId);    
+    window.location.replace(`confirmation.html?id=${data.orderId}`);
+    log("done");
+    //localStorage.clear();
   })
-}
 
-// Redirection sur la page de confirmation
-function goToOrderConfirmation(orderButton){
-  orderButton.href = `confirmation.html?id=${returnAPI[article]._id}`;
-}
+};
+// Redirection de la page
+
 
 // Passer la commande
 let orderButton = document.getElementById('order');
@@ -264,7 +265,8 @@ orderButton.addEventListener('click',function(event){
       let products = getIdFromCart();
       let order = {contact, products};
       postToAPI(order);
-      
+      pageRedirection();
+      log("1");      
     }
     if(theFieldsAreNotEmpty == false){
       log("Entrée vide");
