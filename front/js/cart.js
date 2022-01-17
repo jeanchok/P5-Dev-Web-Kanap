@@ -244,15 +244,12 @@ function postToAPI(order){
   })
   .catch((error) => console.log(`Erreur : ` + error))
   .then(function(data){
-    //localStorage.clear();
-    localStorage.setItem('orderId',data.orderId);    
+    // Redirection vers la page de confirmation
     window.location.replace(`confirmation.html?id=${data.orderId}`);
-    log("done");
-    //localStorage.clear();
+    localStorage.clear();
   })
 
 };
-// Redirection de la page
 
 
 // Passer la commande
@@ -265,7 +262,6 @@ orderButton.addEventListener('click',function(event){
       let products = getIdFromCart();
       let order = {contact, products};
       postToAPI(order);
-      pageRedirection();
       log("1");      
     }
     if(theFieldsAreNotEmpty == false){
