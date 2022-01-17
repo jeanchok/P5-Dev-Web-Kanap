@@ -1,59 +1,53 @@
+// Récupération de l'id du produit contenu dans l'URL
 let params = new URLSearchParams(window.location.search);
+let id = params.get('id');
 
-let id= params.get('id');
-
-console.log(id);
-
+// Appel à l'API
 getInfo();
-// appel à l'API
 function getInfo() {
-    let url = `http://localhost:3000/api/products/${id}`;
-    console.log(url);
+  let url = `http://localhost:3000/api/products/${id}`;
   fetch(url)
-    .then(res => res.json())
-    .catch((error) => console.log(`Erreur : ` + error))
+  .then(res => res.json())
+  .catch((error) => console.log(`Erreur : ` + error))
+  .then(function (returnAPI) {
+    displayInfoProduct(returnAPI);
+    colorSelect (returnAPI.colors);
+  });
+}
 
+// Création des informations produits
+function displayInfoProduct(returnAPI) {
+  let itemImg = document.createElement("img");
+  let imgContainer = document.getElementsByClassName("item__img")[0];
+  itemImg.src = returnAPI.imageUrl;
+  imgContainer.appendChild(itemImg);
+  itemImg.setAttribute("alt",returnAPI.altTxt);
 
-    .then(function (returnAPI) {
-        // création des informations produits
-        
-        let itemImg = document.createElement("img");
-        let imgContainer = document.getElementsByClassName("item__img")[0];
-        itemImg.src = returnAPI.imageUrl;
-        imgContainer.appendChild(itemImg);
-        itemImg.setAttribute("alt",returnAPI.altTxt);
+  let itemTitle = document.getElementById("title");
+  itemTitle.innerHTML = returnAPI.name;
 
-        
-        let itemTitle = document.getElementById("title");
-        itemTitle.innerHTML = returnAPI.name;
+  let itemPrice = document.getElementById("price");
+  itemPrice.innerHTML = returnAPI.price.toLocaleString(undefined,{ minimumFractionDigits: 2 });
+  
+  let itemDescription = document.getElementById("description");
+  itemDescription.innerHTML = returnAPI.description;
+}
 
-        let itemPrice = document.getElementById("price");
-        itemPrice.innerHTML = returnAPI.price.toLocaleString(undefined,{ minimumFractionDigits: 2 });
-        
-        let itemDescription = document.getElementById("description");
-        itemDescription.innerHTML = returnAPI.description;
-
-      // selection des couleurs
-        const colors = returnAPI.colors;
-        //console.log(colors);
-
-        let select = document.getElementById("colors");
-        
-
-        for(let i = 0; i < colors.length; i++) {
-            let opt = colors[i];
-            let el = document.createElement("option");
-            el.textContent = opt;
-            el.value = opt;
-            select.appendChild(el);
-            select.setAttribute("value", el);
-        }
-
-    });
+// Sélection des couleurs
+function colorSelect (colors){
+  let select = document.getElementById("colors");
+  for(let i = 0; i < colors.length; i++) {
+    let opt = colors[i];
+    let el = document.createElement("option");
+    el.textContent = opt;
+    el.value = opt;
+    select.appendChild(el);
+    select.setAttribute("value", el);
+  }
 }
 
 
-//Add to cart
+// Création du panier ou récupération du panier existant
 let cart = [];
 function loadCart() {
   cart = JSON.parse(localStorage.getItem('shoppingCart'));
@@ -62,6 +56,7 @@ if (localStorage.getItem("shoppingCart") != null) {
   loadCart();
 }
 let addToCart = document.getElementById("addToCart");
+
 const log = console.log;
 
 // Evenement appuyer sur "Ajouter au panier"
@@ -89,8 +84,6 @@ addToCart.onclick = function() {
 
     // Ajout au cart du local storage 
     localStorage.setItem("shoppingCart",JSON.stringify(cart));
-    let shoppingCart = localStorage.getItem('shoppingCart');
-    log(JSON.parse(shoppingCart));
 
   } else {
     log("Veuillez sélectionner une couleur et un quantité.");
