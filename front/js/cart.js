@@ -12,6 +12,8 @@ log (cart);
 
 // Affichage de chaque articles du panier
 function displayCart(returnAPI, item, color, qty,id){
+
+  // Création de l'élément <Article> et de ses attributs
   let itemArticle = document.createElement("article");
   let items = document.getElementById("cart__items");
   itemArticle.setAttribute ("data-id", item.id);
@@ -19,48 +21,58 @@ function displayCart(returnAPI, item, color, qty,id){
   items.appendChild(itemArticle);
   itemArticle.classList.add("cart__item");
 
+  // Création du container de l'image
   let imgContainer = document.createElement("div");
   itemArticle.appendChild(imgContainer);
   imgContainer.classList.add("cart__item__img");
 
+  // Création de l'élément <image> et de son attribut "alt"
   let itemImg = document.createElement("img");
   itemImg.src = returnAPI.imageUrl;
   imgContainer.appendChild(itemImg);
   itemImg.setAttribute("alt",returnAPI.altTxt);
 
+  // Création du container des infos produit
   let itemContent = document.createElement("div");
   itemArticle.appendChild(itemContent);
   itemContent.classList.add("cart__item__content");
 
+  // Création du container de la description produit
   let itemDescription = document.createElement("div");
   itemContent.appendChild(itemDescription);
   itemDescription.classList.add("cart__item__content__description");
 
+  // Création du titre
   let itemTitle = document.createElement("h2");
   itemTitle.innerHTML = returnAPI.name;
   itemDescription.appendChild(itemTitle);
 
+  // Création de la couleur
   let itemColor = document.createElement("p");
   itemColor.innerHTML = color;
   itemDescription.appendChild(itemColor);
 
+    // Création du prix
   let itemPrice = document.createElement("p");
   itemPrice.innerHTML = `${returnAPI.price.toLocaleString(undefined,{ minimumFractionDigits: 2 })} €`;
   itemDescription.appendChild(itemPrice);
 
-
+  // Création du container pour la gestion de la quantité et de la suppression produit
   let itemSettings = document.createElement("div");
   itemContent.appendChild(itemSettings);
   itemSettings.classList.add("cart__item__content__settings");
 
+  // Création du container pour la quantité
   let itemSettingsQuantity = document.createElement("div");
   itemSettings.appendChild(itemSettingsQuantity);
   itemSettingsQuantity.classList.add("cart__item__content__settings__quantity");
 
+  // Création du texte pour la quantité
   let itemQuantity = document.createElement("p");
   itemQuantity.innerHTML = `Qté : `;
   itemSettingsQuantity.appendChild(itemQuantity);
 
+  // Création de l'input pour la quantité
   let itemQuantityInput = document.createElement("input");
   itemQuantityInput.id = id;
   itemQuantityInput.color = color;
@@ -72,10 +84,12 @@ function displayCart(returnAPI, item, color, qty,id){
   itemQuantityInput.setAttribute("max", 100);
   itemQuantityInput.setAttribute("value", qty);
 
+  // Création du container pour la suppression produit
   let itemSettingsDelete = document.createElement("div");
   itemSettings.appendChild(itemSettingsDelete);
   itemSettingsDelete.classList.add("cart__item__content__settings__delete");
 
+  // Création de l'élément pour la suppression produit
   let itemDelete = document.createElement("p");
   itemDelete.innerHTML = `Supprimer`;
   itemSettingsDelete.appendChild(itemDelete);
@@ -85,41 +99,20 @@ function displayCart(returnAPI, item, color, qty,id){
 // Appel à l'API pour récolter les informations de chaque produit
 getInfoForEach();
 function getInfoForEach (){
-  let pricePerItems = 0;
-  let SumQty = 0;
-  let sumPrice = [];
   cart.forEach(function(item){
     let id = item.id;
     let color = item.color;
     let qty = Number(item.qty);
     let url = `http://localhost:3000/api/products/${id}`;
+    //fetchAPI(url);
     fetch(url)
     .then(res => res.json())
     .catch((error) => console.log(`Erreur : ` + error))
     .then(function infoAPI (returnAPI) {
-      let priceForAnItem = returnAPI.price;
       displayCart(returnAPI, item, color, qty);
-      //calculTotal2(pricePerItems, sumPrice, SumQty, qty, priceForAnItem);
     })
   })
 }
-
-
-
-// calculTotal2();
-// function calculTotal2(pricePerItems, sumPrice, SumQty, qty, priceForAnItem){
-//   pricePerItems = qty * priceForAnItem;
-//   sumPrice.push(pricePerItems);
-//   SumQty += qty;
-//   log(pricePerItems);
-//   log(sumPrice);
-//   log(SumQty);
-//   const reducer = (previousValue, currentValue) => previousValue + currentValue;
-//   let totalQuantity = document.getElementById("totalQuantity");
-//   totalQuantity.innerHTML = SumQty;
-//   let totalPrice = document.getElementById("totalPrice");
-//   totalPrice.innerHTML = sumPrice.reduce(reducer).toLocaleString(undefined,{ minimumFractionDigits: 2 });
-// }
 
 
 // Cacul des totaux (nombre d'articles et prix)
@@ -136,6 +129,7 @@ function calculTotal(){
     .then(res => res.json())
     .catch((error) => console.log(`Erreur : ` + error))
     .then(function (returnAPI){
+      //log(returnAPI);
       pricePerItems = qty * returnAPI.price;
       sumPrice.push(pricePerItems);
       SumQty += qty;
@@ -148,7 +142,63 @@ function calculTotal(){
   });
 };
 
+// Appel à l'API
+let APIinfos = [];
+APIcall ();
+function APIcall (){
+  APIinfos.length = 0;
+  cart.forEach(function(item){
+    let id = item.id;
+    let url = `http://localhost:3000/api/products/${id}`;
+    fetch(url)
+    .then(res => res.json())
+    .catch((error) => console.log(`Erreur : ` + error))
+    .then(function (returnAPI){
+      APIinfos.push(returnAPI);
+    });
+  });  
+}
 
+// Test .find() pour l'API
+const trees = [
+  { name: "birch", count: 4 },
+  { name: "maple", count: 5 },
+  { name: "oak", count: 2 }
+];
+const result = trees.find(tree => tree.name === 'oak');
+log(trees);
+log(result);
+let test = [];
+log( "api info", APIinfos);
+log(APIinfos.find(obj => obj._id === '415b7cacb65d43b2b5c1ff70f3393ad1'));
+test.push(APIinfos.find(obj => obj._id === '415b7cacb65d43b2b5c1ff70f3393ad1'));
+log("test", test);
+//APIinfosItem
+//log("find",APIinfosItem);
+
+// Cacul des totaux V2 test
+calculTotal2();
+function calculTotal2(){
+  let pricePerItems = 0;
+  let SumQty = 0;
+  let sumPrice = [];
+  cart.forEach(function(item){
+    //let id = item.id;
+    //let qty = Number(item.qty);
+    //let APIinfosItem = APIinfos.find(obj => obj._id === item.id);
+    // log(item.id);
+    // log(APIinfosItem);
+    // log(APIinfos);
+    // pricePerItems = qty * returnAPI.price;
+    // sumPrice.push(pricePerItems);
+    // SumQty += qty;
+    // const reducer = (previousValue, currentValue) => previousValue + currentValue;
+    // let totalQuantity = document.getElementById("totalQuantity");
+    // totalQuantity.innerHTML = SumQty;
+    // let totalPrice = document.getElementById("totalPrice");
+    // totalPrice.innerHTML = sumPrice.reduce(reducer).toLocaleString(undefined,{ minimumFractionDigits: 2 });
+  });
+};
 
 // Gestion du changement de quantité produit
 document.querySelector('body').addEventListener('change', function(event) {
@@ -188,18 +238,20 @@ document.querySelector('body').addEventListener('click', function(event) {
 
 //Vérification des entrées utilisateur
 const input_fields = {
-  itemQuantity: /[0-9]+/,
-  firstName: /^[A-Z]+$/i,
-  lastName: /^[A-Z]+$/i,
+  itemQuantity: /^[0-9]+$/,
+  firstName: /^[A-Z\-]+$/i,
+  lastName: /^[A-Z\-]+$/i,
   address: /^[a-zA-Z0-9\s,'-]*$/i,
-  city: /^[A-Z]+$/i,
-  email: /^([a-z\d\.-]+)@([a-z\d-]+)\.([a-z]{2,8})(\.[a-z]{2,8})?$/,
+  city: /^[A-Z\-]+$/i,
+  email: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
 }
 
+// Vérification si il y a correspondance entre le regex et le field
 let isValid = [];
 function validate(field, regex){
-  regex.test(field.value) ? isValid = isValid.filter(e => e !== field.id) : (field.nextElementSibling.innerHTML = "Entrée invalide !", isValid.push(field.id));
+  regex.test(field.value) ? (field.nextElementSibling.innerHTML = "",isValid = isValid.filter(e => e !== field.id)) : (field.nextElementSibling.innerHTML = "Entrée invalide !", isValid.push(field.id));
 }
+// Vérification de la correspondance pour chacun des inputs
 let entree = document.querySelectorAll('input');
 entree.forEach(item => item.addEventListener('change', function(event){
   validate(event.target, input_fields[event.target.attributes.name.value]);

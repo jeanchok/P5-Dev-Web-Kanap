@@ -13,27 +13,32 @@ function getArticles() {
   });
 }
 
-// Affichage des articles
+// Affichage des articles (HTML)
 function displayArticles(articles,returnAPI){
   for (let article in articles){
+    // Création du lien
     let itemLink = document.createElement("a");
     let items = document.getElementById("items");
     itemLink.href = `product.html?id=${returnAPI[article]._id}`;
     items.appendChild(itemLink);
     
+    // Création de l'élément <Article>
     let newEltArticle = document.createElement("article");
     itemLink.appendChild(newEltArticle);
     
+    // Création de l'élément <Img>
     let itemImg = document.createElement("img");
     itemImg.src = returnAPI[article].imageUrl;
     newEltArticle.appendChild(itemImg);
     itemImg.setAttribute("alt",returnAPI[article].altTxt);
     
+    // Création de l'élément <h3>
     let itemTitle = document.createElement("h3");
     itemTitle.innerHTML = returnAPI[article].name;
     newEltArticle.appendChild(itemTitle);
     itemTitle.classList.add("productName");
     
+    // Création de l'élément <p>
     let itemDescription = document.createElement("p");
     itemDescription.innerHTML = returnAPI[article].description;
     newEltArticle.appendChild(itemDescription);

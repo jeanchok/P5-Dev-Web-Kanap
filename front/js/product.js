@@ -17,18 +17,23 @@ function getInfo() {
 
 // Création des informations produits
 function displayInfoProduct(returnAPI) {
+  // Création de l'élément <Img>
   let itemImg = document.createElement("img");
   let imgContainer = document.getElementsByClassName("item__img")[0];
   itemImg.src = returnAPI.imageUrl;
   imgContainer.appendChild(itemImg);
+  // Ajoût de l'attribut "alt"
   itemImg.setAttribute("alt",returnAPI.altTxt);
 
+  // Insertion du nom de l'article dans le titre
   let itemTitle = document.getElementById("title");
   itemTitle.innerHTML = returnAPI.name;
 
+  // Insertion du prix du produit
   let itemPrice = document.getElementById("price");
   itemPrice.innerHTML = returnAPI.price.toLocaleString(undefined,{ minimumFractionDigits: 2 });
   
+  // Insertion de la description du produit
   let itemDescription = document.getElementById("description");
   itemDescription.innerHTML = returnAPI.description;
 }
