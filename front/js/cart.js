@@ -96,41 +96,38 @@ function displayCart(returnAPI, item, color, qty,id){
   itemDelete.classList.add("deleteItem");
 };
 
-// Appel à l'API pour récolter les informations de chaque produit
-getInfoForEach();
-function getInfoForEach (){
+// Appel à l'API
+let APIinfos = [];
+APIcall ();
+function APIcall (){
+  APIinfos.length = 0;
   cart.forEach(function(item){
     let id = item.id;
     let color = item.color;
-    let qty = Number(item.qty);
-    let url = `http://localhost:3000/api/products/${id}`;
-    //fetchAPI(url);
-    fetch(url)
-    .then(res => res.json())
-    .catch((error) => console.log(`Erreur : ` + error))
-    .then(function infoAPI (returnAPI) {
-      displayCart(returnAPI, item, color, qty);
-    })
-  })
-}
-
-
-// Cacul des totaux (nombre d'articles et prix)
-calculTotal();
-function calculTotal(){
-  let pricePerItems = 0;
-  let SumQty = 0;
-  let sumPrice = [];
-  cart.forEach(function(item){
-    let id = item.id;
     let qty = Number(item.qty);
     let url = `http://localhost:3000/api/products/${id}`;
     fetch(url)
     .then(res => res.json())
     .catch((error) => console.log(`Erreur : ` + error))
     .then(function (returnAPI){
-      //log(returnAPI);
-      pricePerItems = qty * returnAPI.price;
+      APIinfos.push(returnAPI);
+      // Appel de la fonction pour l'affichage de chaque articles du panier
+      displayCart(returnAPI, item, color, qty);
+    });
+  });  
+}
+
+// Cacul des totaux
+calculTotal();
+function calculTotal(){
+  if(APIinfos.length > 0){
+    let pricePerItems = 0;
+    let SumQty = 0;
+    let sumPrice = [];
+    cart.forEach(function(item){
+      let qty = Number(item.qty);
+      let APIinfosItem =  APIinfos.find(obj => obj._id === item.id);
+      pricePerItems = qty * APIinfosItem.price;
       sumPrice.push(pricePerItems);
       SumQty += qty;
       const reducer = (previousValue, currentValue) => previousValue + currentValue;
@@ -139,66 +136,12 @@ function calculTotal(){
       let totalPrice = document.getElementById("totalPrice");
       totalPrice.innerHTML = sumPrice.reduce(reducer).toLocaleString(undefined,{ minimumFractionDigits: 2 });
     });
-  });
+  }else{
+    setTimeout(calculTotal, 100);
+  }
 };
 
-// Appel à l'API
-let APIinfos = [];
-APIcall ();
-function APIcall (){
-  APIinfos.length = 0;
-  cart.forEach(function(item){
-    let id = item.id;
-    let url = `http://localhost:3000/api/products/${id}`;
-    fetch(url)
-    .then(res => res.json())
-    .catch((error) => console.log(`Erreur : ` + error))
-    .then(function (returnAPI){
-      APIinfos.push(returnAPI);
-    });
-  });  
-}
 
-// Test .find() pour l'API
-const trees = [
-  { name: "birch", count: 4 },
-  { name: "maple", count: 5 },
-  { name: "oak", count: 2 }
-];
-const result = trees.find(tree => tree.name === 'oak');
-log(trees);
-log(result);
-let test = [];
-log( "api info", APIinfos);
-log(APIinfos.find(obj => obj._id === '415b7cacb65d43b2b5c1ff70f3393ad1'));
-test.push(APIinfos.find(obj => obj._id === '415b7cacb65d43b2b5c1ff70f3393ad1'));
-log("test", test);
-//APIinfosItem
-//log("find",APIinfosItem);
-
-// Cacul des totaux V2 test
-calculTotal2();
-function calculTotal2(){
-  let pricePerItems = 0;
-  let SumQty = 0;
-  let sumPrice = [];
-  cart.forEach(function(item){
-    //let id = item.id;
-    //let qty = Number(item.qty);
-    //let APIinfosItem = APIinfos.find(obj => obj._id === item.id);
-    // log(item.id);
-    // log(APIinfosItem);
-    // log(APIinfos);
-    // pricePerItems = qty * returnAPI.price;
-    // sumPrice.push(pricePerItems);
-    // SumQty += qty;
-    // const reducer = (previousValue, currentValue) => previousValue + currentValue;
-    // let totalQuantity = document.getElementById("totalQuantity");
-    // totalQuantity.innerHTML = SumQty;
-    // let totalPrice = document.getElementById("totalPrice");
-    // totalPrice.innerHTML = sumPrice.reduce(reducer).toLocaleString(undefined,{ minimumFractionDigits: 2 });
-  });
-};
 
 // Gestion du changement de quantité produit
 document.querySelector('body').addEventListener('change', function(event) {
@@ -266,7 +209,7 @@ function getContact(){
   contact.city = document.getElementById("city").value;
   contact.email = document.getElementById("email").value;
   return contact;
-}
+};
 
 // Vérification si les entrées sont remplis
 function areFieldsEmpty(contact){
@@ -275,7 +218,7 @@ function areFieldsEmpty(contact){
     return true;
   }
   return false;
-}
+};
 
 // Création d'un tableau de string avec seulement les ids du panier
 function getIdFromCart(){
@@ -286,7 +229,7 @@ function getIdFromCart(){
     idFromCart.push(itemIdString);
   });
   return idFromCart;
-}
+};
 
 //POST à l'API et récupération de l'IdOrder
 function postToAPI(order){
@@ -311,6 +254,31 @@ function postToAPI(order){
   })
 };
 
+// Pop up
+function togglePopup(txt){
+  let popup = document.createElement('div');
+  let popupText = document.createElement("span");
+  popupText.classList.remove("show");
+  let submitContainer = document.getElementById('submitcontainer');
+  popupText.classList.add("popuptext");
+  popupText.id = "myPopup";
+  popup.classList.add("popup");
+  submitContainer.appendChild(popup);
+  popup.appendChild(popupText);
+  if(txt = 1){
+    popupText.innerHTML = "coucou";
+    popupText.classList.add("show");
+    log(1);
+  };
+  if(txt = 2){
+    popupText.innerHTML = "coucou2";
+    popupText.classList.add("show");
+    log();
+  };
+};
+
+
+
 
 // Passer la commande
 let orderButton = document.getElementById('order');
@@ -325,9 +293,11 @@ orderButton.addEventListener('click',function(event){
     }
     if(theFieldsAreNotEmpty == false){
       log("Entrée vide");
+      togglePopup(1);
     }
     if(isValid.length !== 0){
       log("Entrée incorrecte");
+      togglePopup(2);
     } 
   }
 );
