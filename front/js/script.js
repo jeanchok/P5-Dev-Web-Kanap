@@ -1,10 +1,18 @@
-getArticles();
+// Récupération de la variable dans le DOM (réutilisé dans la fonction getArticles() et displayArticles())
+let items = document.getElementById("items");
+
 // appel à l'API
+getArticles();
 function getArticles() {
   fetch("http://localhost:3000/api/products")
   .then(res => res.json())
 
-  .catch(error => console.log(`Erreur : ` + error))
+  .catch(function (error) {
+    console.log(`Erreur : ` + error);
+    let errorMessage = document.createElement("h2");
+    items.appendChild(errorMessage);
+    errorMessage.innerHTML = "Erreur : L'API semble ne pas être connectée."
+  })
 
   .then(function (returnAPI) {
     const articles = returnAPI;
@@ -18,7 +26,6 @@ function displayArticles(articles,returnAPI){
   for (let article in articles){
     // Création du lien
     let itemLink = document.createElement("a");
-    let items = document.getElementById("items");
     itemLink.href = `product.html?id=${returnAPI[article]._id}`;
     items.appendChild(itemLink);
     

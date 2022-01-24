@@ -141,18 +141,19 @@ function calculTotal(){
   }
 };
 
-
-
 // Gestion du changement de quantité produit
 document.querySelector('body').addEventListener('change', function(event) {
   if (event.target.className === 'itemQuantity') {
     let inputTargeted = event.target;
     let articleTargeted = inputTargeted.closest(".cart__item");
     cart.forEach(function(item){
-      if(item.id === articleTargeted.dataset.id && item.color === articleTargeted.dataset.color){
+      if(event.target.value > 0 && item.id === articleTargeted.dataset.id && item.color === articleTargeted.dataset.color){
         item.qty = event.target.value;
         localStorage.setItem("shoppingCart",JSON.stringify(cart));
-        loadCart();  
+        loadCart();
+        log(cart);  
+      } if(event.target.value < 0) {
+        log("La quantité doit être supérieure à zéro.");
       }
     });
     calculTotal();
@@ -181,7 +182,6 @@ document.querySelector('body').addEventListener('click', function(event) {
 
 //Vérification des entrées utilisateur
 const input_fields = {
-  itemQuantity: /^[0-9]+$/,
   firstName: /^[A-Z\-]+$/i,
   lastName: /^[A-Z\-]+$/i,
   address: /^[a-zA-Z0-9\s,'-]*$/i,
@@ -198,6 +198,7 @@ function validate(field, regex){
 let entree = document.querySelectorAll('input');
 entree.forEach(item => item.addEventListener('change', function(event){
   validate(event.target, input_fields[event.target.attributes.name.value]);
+  log(isValid)
 }));
 
 // Rassembler les entrée dans un objet contact
@@ -254,32 +255,6 @@ function postToAPI(order){
   })
 };
 
-// Pop up
-function togglePopup(txt){
-  let popup = document.createElement('div');
-  let popupText = document.createElement("span");
-  popupText.classList.remove("show");
-  let submitContainer = document.getElementById('submitcontainer');
-  popupText.classList.add("popuptext");
-  popupText.id = "myPopup";
-  popup.classList.add("popup");
-  submitContainer.appendChild(popup);
-  popup.appendChild(popupText);
-  if(txt = 1){
-    popupText.innerHTML = "coucou";
-    popupText.classList.add("show");
-    log(1);
-  };
-  if(txt = 2){
-    popupText.innerHTML = "coucou2";
-    popupText.classList.add("show");
-    log();
-  };
-};
-
-
-
-
 // Passer la commande
 let orderButton = document.getElementById('order');
 orderButton.addEventListener('click',function(event){
@@ -293,11 +268,9 @@ orderButton.addEventListener('click',function(event){
     }
     if(theFieldsAreNotEmpty == false){
       log("Entrée vide");
-      togglePopup(1);
     }
     if(isValid.length !== 0){
       log("Entrée incorrecte");
-      togglePopup(2);
     } 
   }
 );
