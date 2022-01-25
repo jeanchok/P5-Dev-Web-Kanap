@@ -155,7 +155,7 @@ document.querySelector('body').addEventListener('change', function(event) {
         loadCart();
         log(cart);  
       }
-      if(event.target.value < 0) {
+      if(event.target.value < 1) {
         event.target.value = 1;
         log("La quantité doit être supérieure à zéro.");
       }

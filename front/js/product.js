@@ -38,6 +38,14 @@ function displayInfoProduct(returnAPI) {
   itemDescription.innerHTML = returnAPI.description;
 }
 
+// Empêcher l'utilisateur de rentrer certains caractère dans l'input de quantité (accepte "Backspace" (keyCode: 8) and "Delete" (keyCode: 46))
+positiveNumberOnly();
+function positiveNumberOnly(){
+  let itemQuantityInput = document.getElementById('quantity');
+  itemQuantityInput.setAttribute("onkeydown","return event.keyCode === 8 || event.keyCode === 46 ? true : !isNaN(Number(event.key))" )
+};
+
+
 // Sélection des couleurs
 function colorSelect (colors){
   let select = document.getElementById("colors");
@@ -89,6 +97,7 @@ addToCart.onclick = function() {
 
     // Ajout au cart du local storage 
     localStorage.setItem("shoppingCart",JSON.stringify(cart));
+    log(cart);
 
   } else {
     log("Veuillez sélectionner une couleur et un quantité.");
