@@ -83,6 +83,8 @@ function displayCart(returnAPI, item, color, qty,id){
   itemQuantityInput.setAttribute("min", 1);
   itemQuantityInput.setAttribute("max", 100);
   itemQuantityInput.setAttribute("value", qty);
+  // Empêcher l'utilisateur de rentrer certains caractère dans l'input de quantité (accepte "Backspace" (keyCode: 8) and "Delete" (keyCode: 46))
+  itemQuantityInput.setAttribute("onkeydown","return event.keyCode === 8 || event.keyCode === 46 ? true : !isNaN(Number(event.key))" );
 
   // Création du container pour la suppression produit
   let itemSettingsDelete = document.createElement("div");
@@ -152,13 +154,18 @@ document.querySelector('body').addEventListener('change', function(event) {
         localStorage.setItem("shoppingCart",JSON.stringify(cart));
         loadCart();
         log(cart);  
-      } if(event.target.value < 0) {
+      }
+      if(event.target.value < 0) {
+        event.target.value = 1;
         log("La quantité doit être supérieure à zéro.");
       }
     });
     calculTotal();
   }
 });
+
+
+
 
 // Supprimer un article du panier
 document.querySelector('body').addEventListener('click', function(event) {
