@@ -21,7 +21,7 @@ function getInfo() {
 function displayInfoProduct(returnAPI) {
   // Création de l'élément <Img>
   let itemImg = document.createElement("img");
-  let imgContainer = document.getElementsByClassName("item__img")[0];
+  const imgContainer = document.getElementsByClassName("item__img")[0];
   itemImg.src = returnAPI.imageUrl;
   imgContainer.appendChild(itemImg);
   // Ajoût de l'attribut "alt"
@@ -72,7 +72,7 @@ if (localStorage.getItem("shoppingCart") != null) {
 }
 
 // Evenement appuyer sur "Ajouter au panier"
-let addToCart = document.getElementById("addToCart");
+const addToCart = document.getElementById("addToCart");
 addToCart.onclick = function() {   
   const infoArticle = {};
   let isInCart = false;
