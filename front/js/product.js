@@ -1,3 +1,5 @@
+const log = console.log;
+
 // Récupération de l'id du produit contenu dans l'URL
 let params = new URLSearchParams(window.location.search);
 let id = params.get('id');
@@ -50,12 +52,12 @@ function positiveNumberOnly(){
 function colorSelect (colors){
   let select = document.getElementById("colors");
   for(let i = 0; i < colors.length; i++) {
-    let opt = colors[i];
-    let el = document.createElement("option");
-    el.textContent = opt;
-    el.value = opt;
-    select.appendChild(el);
-    select.setAttribute("value", el);
+    let optionColor = colors[i];
+    let element = document.createElement("option");
+    element.textContent = optionColor;
+    element.value = optionColor;
+    select.appendChild(element);
+    select.setAttribute("value", element);
   }
 }
 
@@ -68,16 +70,14 @@ function loadCart() {
 if (localStorage.getItem("shoppingCart") != null) {
   loadCart();
 }
-let addToCart = document.getElementById("addToCart");
-
-const log = console.log;
 
 // Evenement appuyer sur "Ajouter au panier"
+let addToCart = document.getElementById("addToCart");
 addToCart.onclick = function() {   
   const infoArticle = {};
   let isInCart = false;
   let quantityArticle = document.getElementById("quantity").value;
-  let colorSelect = document.getElementById( "colors" ).value;
+  let colorSelect = document.getElementById("colors").value;
   infoArticle.qty = Number(quantityArticle);
   infoArticle.id = id;
   infoArticle.color = colorSelect;

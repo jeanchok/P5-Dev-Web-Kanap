@@ -10,6 +10,27 @@ if (localStorage.getItem("shoppingCart") != null) {
 }
 log (cart);
 
+// Appel à l'API
+let APIinfos = [];
+APIcall ();
+function APIcall (){
+  APIinfos.length = 0;
+  cart.forEach(function(item){
+    let id = item.id;
+    let color = item.color;
+    let qty = Number(item.qty);
+    let url = `http://localhost:3000/api/products/${id}`;
+    fetch(url)
+    .then(res => res.json())
+    .catch((error) => console.log(`Erreur : ` + error))
+    .then(function (returnAPI){
+      APIinfos.push(returnAPI);
+      // Appel de la fonction pour l'affichage de chaque articles du panier
+      displayCart(returnAPI, item, color, qty);
+    });
+  });  
+}
+
 // Affichage de chaque articles du panier
 function displayCart(returnAPI, item, color, qty,id){
 
@@ -98,27 +119,6 @@ function displayCart(returnAPI, item, color, qty,id){
   itemDelete.classList.add("deleteItem");
 };
 
-// Appel à l'API
-let APIinfos = [];
-APIcall ();
-function APIcall (){
-  APIinfos.length = 0;
-  cart.forEach(function(item){
-    let id = item.id;
-    let color = item.color;
-    let qty = Number(item.qty);
-    let url = `http://localhost:3000/api/products/${id}`;
-    fetch(url)
-    .then(res => res.json())
-    .catch((error) => console.log(`Erreur : ` + error))
-    .then(function (returnAPI){
-      APIinfos.push(returnAPI);
-      // Appel de la fonction pour l'affichage de chaque articles du panier
-      displayCart(returnAPI, item, color, qty);
-    });
-  });  
-}
-
 // Cacul des totaux
 calculTotal();
 function calculTotal(){
@@ -164,9 +164,6 @@ document.querySelector('body').addEventListener('change', function(event) {
   }
 });
 
-
-
-
 // Supprimer un article du panier
 document.querySelector('body').addEventListener('click', function(event) {
   if (event.target.className === 'deleteItem'){
@@ -176,11 +173,12 @@ document.querySelector('body').addEventListener('click', function(event) {
     cart.forEach(function(item){
       if(item.id === itemToDelete.dataset.id && item.color === itemToDelete.dataset.color){
         const index = cart.indexOf(item);
-        if(index > -1){
+        //if(index > -1){
           cart.splice(index, 1);
           localStorage.setItem("shoppingCart",JSON.stringify(cart));
           loadCart();
-        };
+          log(cart)
+        //};
       };
     });
     calculTotal();
@@ -189,10 +187,10 @@ document.querySelector('body').addEventListener('click', function(event) {
 
 //Vérification des entrées utilisateur
 const input_fields = {
-  firstName: /^[A-Z\-]+$/i,
-  lastName: /^[A-Z\-]+$/i,
-  address: /^[a-zA-Z0-9\s,'-]*$/i,
-  city: /^[A-Z\-]+$/i,
+  firstName: /^[àèêéA-Z\-]+$/i,
+  lastName: /^[àèêéA-Z\-]+$/i,
+  address: /^[.àèêéa-zA-Z0-9\s,'-]*$/i,
+  city: /^[àèêéA-Z\-]+$/i,
   email: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
 }
 
@@ -201,11 +199,11 @@ let isValid = [];
 function validate(field, regex){
   regex.test(field.value) ? (field.nextElementSibling.innerHTML = "",isValid = isValid.filter(e => e !== field.id)) : (field.nextElementSibling.innerHTML = "Entrée invalide !", isValid.push(field.id));
 }
+
 // Vérification de la correspondance pour chacun des inputs
 let entree = document.querySelectorAll('input');
 entree.forEach(item => item.addEventListener('change', function(event){
   validate(event.target, input_fields[event.target.attributes.name.value]);
-  log(isValid)
 }));
 
 // Rassembler les entrée dans un objet contact
@@ -239,6 +237,26 @@ function getIdFromCart(){
   return idFromCart;
 };
 
+// Passer la commande
+let orderButton = document.getElementById('order');
+orderButton.addEventListener('click',function(event){
+  event.preventDefault();
+  let contact = getContact();
+  let theFieldsAreNotEmpty = areFieldsEmpty(contact);
+    if(isValid.length == 0 && theFieldsAreNotEmpty == true){
+      let products = getIdFromCart();
+      let order = {contact, products};
+      postToAPI(order);   
+    }
+    if(theFieldsAreNotEmpty == false){
+      log("Entrée vide");
+    }
+    if(isValid.length !== 0){
+      log("Entrée incorrecte");
+    } 
+  }
+);
+
 //POST à l'API et récupération de l'IdOrder
 function postToAPI(order){
   fetch("http://localhost:3000/api/products/order", {
@@ -262,22 +280,3 @@ function postToAPI(order){
   })
 };
 
-// Passer la commande
-let orderButton = document.getElementById('order');
-orderButton.addEventListener('click',function(event){
-  event.preventDefault();
-  let contact = getContact();
-  let theFieldsAreNotEmpty = areFieldsEmpty(contact);
-    if(isValid.length == 0 && theFieldsAreNotEmpty == true){
-      let products = getIdFromCart();
-      let order = {contact, products};
-      postToAPI(order);   
-    }
-    if(theFieldsAreNotEmpty == false){
-      log("Entrée vide");
-    }
-    if(isValid.length !== 0){
-      log("Entrée incorrecte");
-    } 
-  }
-);

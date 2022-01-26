@@ -15,15 +15,13 @@ function getArticles() {
   })
 
   .then(function (returnAPI) {
-    const articles = returnAPI;
-    console.log(articles);
-    displayArticles(articles,returnAPI);
+    displayArticles(returnAPI);
   });
 }
 
 // Affichage des articles (HTML)
-function displayArticles(articles,returnAPI){
-  for (let article in articles){
+function displayArticles(returnAPI){
+  for (let article in returnAPI){
     // Création du lien
     let itemLink = document.createElement("a");
     itemLink.href = `product.html?id=${returnAPI[article]._id}`;
