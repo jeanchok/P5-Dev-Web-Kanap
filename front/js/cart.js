@@ -36,7 +36,7 @@ function displayCart(returnAPI, item, color, qty,id){
 
   // Création de l'élément <Article> et de ses attributs
   let itemArticle = document.createElement("article");
-  let items = document.getElementById("cart__items");
+  const items = document.getElementById("cart__items");
   itemArticle.setAttribute ("data-id", item.id);
   itemArticle.setAttribute ("data-color",  color);
   items.appendChild(itemArticle);

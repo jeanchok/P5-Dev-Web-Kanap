@@ -1,5 +1,5 @@
 // Récupération de la variable dans le DOM (réutilisé dans la fonction getArticles() et displayArticles())
-let items = document.getElementById("items");
+const items = document.getElementById("items");
 
 // appel à l'API
 getArticles();
