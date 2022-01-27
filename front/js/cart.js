@@ -173,12 +173,10 @@ document.querySelector('body').addEventListener('click', function(event) {
     cart.forEach(function(item){
       if(item.id === itemToDelete.dataset.id && item.color === itemToDelete.dataset.color){
         const index = cart.indexOf(item);
-        //if(index > -1){
-          cart.splice(index, 1);
-          localStorage.setItem("shoppingCart",JSON.stringify(cart));
-          loadCart();
-          log(cart)
-        //};
+        cart.splice(index, 1);
+        localStorage.setItem("shoppingCart",JSON.stringify(cart));
+        loadCart();
+        log(cart)
       };
     });
     calculTotal();
